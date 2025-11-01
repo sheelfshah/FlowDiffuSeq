@@ -25,6 +25,10 @@ if __name__ == '__main__':
     parser.add_argument('--microbatch', type=int, default=64, help='microbatch size')
     parser.add_argument('--seed', type=int, default=101, help='random seed')
 
+    parser.add_argument('--freeze_embeddings', type=bool, default=False, help='freeze embeddings')
+    parser.add_argument('--freeze_rounding', type=bool, default=False, help='freeze embeddings')
+    
+
     parser.add_argument('--config_name', type=str, default='bert-base-uncased', help='config of pre-trained models')
     parser.add_argument('--vocab', type=str, default='bert', help='use bert vocab or load external vocab dict if given as path')
     parser.add_argument('--use_plm_init', type=str, default='no', choices=['no', 'bert'], help='load init parameter from the pre-trained lm')
@@ -71,7 +75,8 @@ if __name__ == '__main__':
                   f"--seq_len {args.seq_len} --hidden_t_dim {args.hidden_t_dim} --seed {args.seed} " \
                   f"--hidden_dim {args.hidden_dim} " \
                   f"--learning_steps {args.learning_steps} --save_interval {args.save_interval} " \
-                  f"--config_name {args.config_name} --notes {args.notes}"
+                  f"--config_name {args.config_name} --notes {args.notes} "\
+                  f"--freeze_embeddings {args.freeze_embeddings} --freeze_rounding {args.freeze_rounding}"
 
     COMMANDLINE += " " + args.app
 

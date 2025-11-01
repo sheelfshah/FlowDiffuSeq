@@ -1,0 +1,67 @@
+/home/sheels/miniconda3/envs/DiffuSeq/lib/python3.9/site-packages/torch/distributed/launch.py:163: DeprecationWarning: The 'warn' method is deprecated, use 'warning' instead
+  logger.warn(
+The module torch.distributed.launch is deprecated and going to be removed in future.Migrate to torch.distributed.run
+INFO:torch.distributed.launcher.api:Starting elastic_operator with launch configs:
+  entrypoint       : run_train.py
+  min_nodes        : 1
+  max_nodes        : 1
+  nproc_per_node   : 1
+  run_id           : none
+  rdzv_backend     : static
+  rdzv_endpoint    : 127.0.0.1:12233
+  rdzv_configs     : {'rank': 0, 'timeout': 900}
+  max_restarts     : 3
+  monitor_interval : 5
+  log_dir          : None
+  metrics_cfg      : {}
+
+INFO:torch.distributed.elastic.agent.server.local_elastic_agent:log directory set to: /tmp/torchelastic_evvt1rpo/none_u80rika2
+INFO:torch.distributed.elastic.agent.server.api:[default] starting workers for entrypoint: python
+INFO:torch.distributed.elastic.agent.server.api:[default] Rendezvous'ing worker group
+/home/sheels/miniconda3/envs/DiffuSeq/lib/python3.9/site-packages/torch/distributed/elastic/utils/store.py:52: FutureWarning: This is an experimental API and will be changed in future.
+  warnings.warn(
+INFO:torch.distributed.elastic.agent.server.api:[default] Rendezvous complete for workers. Result:
+  restart_count=0
+  master_addr=127.0.0.1
+  master_port=12233
+  group_rank=0
+  group_world_size=1
+  local_ranks=[0]
+  role_ranks=[0]
+  global_ranks=[0]
+  role_world_sizes=[1]
+  global_world_sizes=[1]
+
+INFO:torch.distributed.elastic.agent.server.api:[default] Starting worker group
+INFO:torch.distributed.elastic.multiprocessing:Setting worker0 reply file to: /tmp/torchelastic_evvt1rpo/none_u80rika2/attempt_0/0/error.json
+ OPENAI_LOGDIR=diffusion_models/diffuseq_qqp_h128_lr0.0001_t2000_sqrt_lossaware_seed102_qqp20251030-21:05:37  TOKENIZERS_PARALLELISM=false python train.py   --checkpoint_path diffusion_models/diffuseq_qqp_h128_lr0.0001_t2000_sqrt_lossaware_seed102_qqp20251030-21:05:37 --dataset qqp --data_dir datasets/QQP --vocab bert --use_plm_init no --lr 0.0001 --batch_size 128 --microbatch 64 --diffusion_steps 2000 --noise_schedule sqrt --schedule_sampler lossaware --resume_checkpoint diffusion_models/diffuseq_qqp_h128_lr0.0001_t2000_sqrt_lossaware_seed102_qqp20251030-19:19:49/ema_0.9999_020000.pt --seq_len 128 --hidden_t_dim 128 --seed 102 --hidden_dim 128 --learning_steps 30000 --save_interval 10000 --config_name bert-base-uncased --notes qqp20251030-21:05:37 --freeze_embeddings True --freeze_rounding False 
+/home/sheels/miniconda3/envs/DiffuSeq/lib/python3.9/site-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'repr' attribute with value False was provided to the `Field()` function, which has no effect in the context it was used. 'repr' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/home/sheels/miniconda3/envs/DiffuSeq/lib/python3.9/site-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'frozen' attribute with value True was provided to the `Field()` function, which has no effect in the context it was used. 'frozen' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+Logging to diffusion_models/diffuseq_qqp_h128_lr0.0001_t2000_sqrt_lossaware_seed102_qqp20251030-21:05:37
+### Creating data loader...
+/home/sheels/miniconda3/envs/DiffuSeq/lib/python3.9/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+initializing the random embeddings Embedding(30522, 128)
+############################## 
+Loading text data...
+############################## 
+Loading dataset qqp from datasets/QQP...
+### Loading form the TRAIN set...
+### Data samples...
+ ['Academic and Educational Advice: What can I do after completing bcom?', 'What are some good songs to make a texting lyric prank?'] ['What should I do after bcom?', 'What is a good prank lyric text to text to a friend?']
+RAM used: 1241.22 MB
+Dataset({
+    features: ['src', 'trg'],
+    num_rows: 144715
+})
+RAM used: 1281.24 MB
+Running tokenizer on dataset (num_proc=4):   0%|          | 0/144715 [00:00<?, ? examples/s]Running tokenizer on dataset (num_proc=4):   1%|          | 1000/144715 [00:00<00:38, 3685.06 examples/s]Running tokenizer on dataset (num_proc=4):   3%|▎         | 5000/144715 [00:00<00:10, 13584.72 examples/s]Running tokenizer on dataset (num_proc=4):   8%|▊         | 12000/144715 [00:00<00:05, 25196.34 examples/s]Running tokenizer on dataset (num_proc=4):  12%|█▏        | 17000/144715 [00:00<00:04, 27051.51 examples/s]Running tokenizer on dataset (num_proc=4):  17%|█▋        | 24000/144715 [00:00<00:03, 37106.33 examples/s]Running tokenizer on dataset (num_proc=4):  20%|██        | 29000/144715 [00:00<00:03, 37604.03 examples/s]Running tokenizer on dataset (num_proc=4):  24%|██▍       | 35000/144715 [00:01<00:02, 42434.47 examples/s]Running tokenizer on dataset (num_proc=4):  28%|██▊       | 40000/144715 [00:01<00:02, 39361.87 examples/s]Running tokenizer on dataset (num_proc=4):  31%|███       | 45000/144715 [00:01<00:02, 40285.65 examples/s]Running tokenizer on dataset (num_proc=4):  36%|███▌      | 52000/144715 [00:01<00:01, 46516.25 examples/s]Running tokenizer on dataset (num_proc=4):  39%|███▉      | 57000/144715 [00:01<00:01, 46100.80 examples/s]Running tokenizer on dataset (num_proc=4):  43%|████▎     | 62000/144715 [00:01<00:02, 40132.62 examples/s]Running tokenizer on dataset (num_proc=4):  47%|████▋     | 68000/144715 [00:01<00:01, 44621.00 examples/s]Running tokenizer on dataset (num_proc=4):  50%|█████     | 73000/144715 [00:01<00:01, 45532.57 examples/s]Running tokenizer on dataset (num_proc=4):  54%|█████▍    | 78000/144715 [00:02<00:01, 46275.64 examples/s]Running tokenizer on dataset (num_proc=4):  57%|█████▋    | 83000/144715 [00:02<00:01, 45894.07 examples/s]Running tokenizer on dataset (num_proc=4):  61%|██████    | 88000/144715 [00:02<00:01, 40977.26 examples/s]Running tokenizer on dataset (num_proc=4):  65%|██████▍   | 94000/144715 [00:02<00:01, 43755.53 examples/s]Running tokenizer on dataset (num_proc=4):  69%|██████▉   | 100000/144715 [00:02<00:01, 43583.10 examples/s]Running tokenizer on dataset (num_proc=4):  73%|███████▎  | 106000/144715 [00:02<00:00, 46336.87 examples/s]Running tokenizer on dataset (num_proc=4):  77%|███████▋  | 111000/144715 [00:02<00:00, 42347.32 examples/s]Running tokenizer on dataset (num_proc=4):  80%|████████  | 116000/144715 [00:02<00:00, 42470.58 examples/s]Running tokenizer on dataset (num_proc=4):  84%|████████▎ | 121000/144715 [00:03<00:00, 43991.66 examples/s]Running tokenizer on dataset (num_proc=4):  88%|████████▊ | 128000/144715 [00:03<00:00, 47704.44 examples/s]Running tokenizer on dataset (num_proc=4):  92%|█████████▏| 133000/144715 [00:03<00:00, 47278.01 examples/s]Running tokenizer on dataset (num_proc=4):  95%|█████████▌| 138000/144715 [00:03<00:00, 42733.99 examples/s]Running tokenizer on dataset (num_proc=4):  98%|█████████▊| 142358/144715 [00:03<00:00, 38157.15 examples/s]Running tokenizer on dataset (num_proc=4): 100%|██████████| 144715/144715 [00:03<00:00, 37416.62 examples/s]
+### tokenized_datasets Dataset({
+    features: ['input_id_x', 'input_id_y'],
+    num_rows: 144715
+})
+### tokenized_datasets...example [101, 3834, 1998, 4547, 6040, 1024, 2054, 2064, 1045, 2079, 2044, 7678, 4647, 5358, 1029, 102]
+RAM used: 1438.83 MB
+merge and mask (num_proc=1):   0%|          | 0/144715 [00:00<?, ? examples/s]merge and mask (num_proc=1):   2%|▏         | 3000/144715 [00:00<00:20, 6918.24 examples/s]merge and mask (num_proc=1):   6%|▌         | 9000/144715 [00:00<00:07, 19134.41 examples/s]merge and mask (num_proc=1):   9%|▉         | 13000/144715 [00:00<00:06, 20851.13 examples/s]merge and mask (num_proc=1):  13%|█▎        | 19000/144715 [00:00<00:04, 28826.83 examples/s]merge and mask (num_proc=1):  17%|█▋        | 25000/144715 [00:00<00:03, 34893.41 examples/s]merge and mask (num_proc=1):  21%|██▏       | 31000/144715 [00:01<00:02, 39287.66 examples/s]merge and mask (num_proc=1):  26%|██▌       | 37000/144715 [00:01<00:02, 36882.33 examples/s]merge and mask (num_proc=1):  30%|██▉       | 43000/144715 [00:01<00:02, 40692.40 examples/s]merge and mask (num_proc=1):  34%|███▍      | 49000/144715 [00:01<00:02, 43629.55 examples/s]merge and mask (num_proc=1):  38%|███▊      | 55000/144715 [00:01<00:01, 45764.71 examples/s]merge and mask (num_proc=1):  42%|████▏     | 61000/144715 [00:01<00:01, 47338.66 examples/s]merge and mask (num_proc=1):  46%|████▌     | 66000/144715 [00:01<00:01, 41771.34 examples/s]merge and mask (num_proc=1):  50%|████▉     | 72000/144715 [00:02<00:01, 43346.10 examples/s]merge and mask (num_proc=1):  54%|█████▍    | 78000/144715 [00:02<00:01, 45532.81 examples/s]merge and mask (num_proc=1):  58%|█████▊    | 84000/144715 [00:02<00:01, 47036.86 examples/s]merge and mask (num_proc=1):  62%|██████▏   | 90000/144715 [00:02<00:01, 41797.76 examples/s]merge and mask (num_proc=1):  66%|██████▋   | 96000/144715 [00:02<00:01, 44266.40 examples/s]merge and mask (num_proc=1):  70%|███████   | 102000/144715 [00:02<00:00, 45936.26 examples/s]merge and mask (num_proc=1):  75%|███████▍  | 108000/144715 [00:02<00:00, 47262.47 examples/s]merge and mask (num_proc=1):  79%|███████▉  | 114000/144715 [00:02<00:00, 47959.52 examples/s]merge and mask (num_proc=1):  83%|████████▎ | 120000/144715 [00:03<00:00, 42556.38 examples/s]merge and mask (num_proc=1):  87%|████████▋ | 126000/144715 [00:03<00:00, 44893.24 examples/s]merge and mask (num_proc=1):  91%|█████████ | 132000/144715 [00:03<00:00, 46725.62 examples/s]merge and mask (num_proc=1):  95%|█████████▌| 138000/144715 [00:03<00:00, 47820.83 examples/s]merge and mask (num_proc=1):  99%|█████████▉| 143000/144715 [00:03<00:00, 40494.12 examples/s]
