@@ -216,8 +216,12 @@ class TextDataset(Dataset):
             return arr, out_kwargs
 
 def _collate_batch_helper(examples, pad_token_id, max_length, return_mask=False):
-    result = torch.full([len(examples), max_length], pad_token_id, dtype=torch.int64).tolist()
-    mask_ = torch.full([len(examples), max_length], pad_token_id, dtype=torch.int64).tolist()
+    result = np.zeros([len(examples), max_length], dtype=np.int64) + pad_token_id
+    # result = torch.full([len(examples), max_length], pad_token_id, dtype=torch.int64, device='cpu')
+    result = result.tolist()
+    mask_ = np.zeros([len(examples), max_length], dtype=np.int64) + pad_token_id
+    # mask_ = torch.full([len(examples), max_length], pad_token_id, dtype=torch.int64).tolist()
+    mask_ = mask_.tolist()
     for i, example in enumerate(examples):
         curr_len = min(len(example), max_length)
         result[i][:curr_len] = example[:curr_len]

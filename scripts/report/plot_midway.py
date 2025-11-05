@@ -20,5 +20,29 @@ ax2 = ax1.twinx()
 ax2.plot(steps, rouge_values, "o-", label="DiffuSeq", color="tab:red")
 ax2.set_ylabel("ROUGE Score")
 ax2.legend()
-plt.show()
+# plt.show()
 plt.savefig("bleu_rouge_vs_steps.pdf", bbox_inches="tight")
+plt.close()
+
+import pandas as pd
+
+# read csv file
+df_frozen_embeddings = pd.read_csv("../../diffusion_models/diffuseq_qqp_h128_lr0.0001_t2000_sqrt_lossaware_seed102_qqp20251030-21:06:33/progress.csv")
+df_trained_embeddings = pd.read_csv("../../diffusion_models/diffuseq_qqp_h128_lr0.0001_t2000_sqrt_lossaware_seed102_qqp20251030-22:44:11/progress.csv")
+
+fig, ax1 = plt.subplots()
+sns.set_theme(style="ticks", context="paper")
+ax1.plot([20*i for i in range(len(df_frozen_embeddings))], df_frozen_embeddings.loss, "-", label="Frozen Embeddings", color="tab:blue")
+ax1.plot([20*i for i in range(len(df_trained_embeddings))], df_trained_embeddings.loss, "-", label="Trained Embeddings", color="tab:orange")
+ax1.set_xlabel("Training Epochs")
+ax1.set_ylabel("Training Loss")
+ax1.set_ylim(min(df_frozen_embeddings.loss), max(df_trained_embeddings.loss)*0.97)
+# add point for final loss and add value
+# ax1.plot([20*len(df_frozen_embeddings)], df_frozen_embeddings.loss.iloc[-1], "o", color="tab:blue")
+# ax1.plot([20*len(df_trained_embeddings)], df_trained_embeddings.loss.iloc[-1], "o", color="tab:orange")
+# ax1.text(20*len(df_frozen_embeddings), df_frozen_embeddings.loss.iloc[-1], f"{df_frozen_embeddings.loss.iloc[-1]:.4f}", color="tab:blue")
+# ax1.text(20*len(df_trained_embeddings), df_trained_embeddings.loss.iloc[-1], f"{df_trained_embeddings.loss.iloc[-1]:.4f}", color="tab:orange")
+ax1.legend()
+# plt.show()
+plt.savefig("training_loss_vs_epochs.pdf", bbox_inches="tight")
+plt.close()

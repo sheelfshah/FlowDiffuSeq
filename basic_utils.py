@@ -122,6 +122,8 @@ def create_model_and_diffusion(
     rescale_learned_sigmas,
     use_kl,
     notes,
+    freeze_embeddings=False,
+    freeze_rounding=False,
     **kwargs,
 ):
     model = TransformerNetModel(
@@ -131,7 +133,9 @@ def create_model_and_diffusion(
         dropout=dropout,
         config_name=config_name,
         vocab_size=vocab_size,
-        init_pretrained=use_plm_init
+        init_pretrained=use_plm_init,
+        freeze_embeddings=freeze_embeddings,
+        freeze_rounding=freeze_rounding,
     )
 
     betas = gd.get_named_beta_schedule(noise_schedule, diffusion_steps)

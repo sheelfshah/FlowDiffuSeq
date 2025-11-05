@@ -1,7 +1,7 @@
 bert_score
 blobfile
 nltk
-numpy
+numpy==1.21.2
 packaging
 psutil
 PyYAML

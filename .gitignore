@@ -5,5 +5,9 @@ diffusion_models/
 diffusion_models/*
 generation_outputs/
 generation_outputs/*
+datasets/
+datasets/*
+pretrained/
+pretrained/*
 *.log
 *.pth
