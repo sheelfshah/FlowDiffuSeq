@@ -26,10 +26,13 @@ from basic_utils import (
     args_to_dict,
     load_tokenizer
 )
+import sys
+
+from pathlib import Path
 
 def create_argparser():
     defaults = dict(model_path='', step=0, out_dir='', top_p=0)
-    decode_defaults = dict(split='valid', clamp_step=0, seed2=105, clip_denoised=False)
+    decode_defaults = dict(split='valid', clamp_step=0, seed2=105, clip_denoised=False, only_generate_embeddings=False)
     defaults.update(load_defaults_config())
     defaults.update(decode_defaults)
     parser = argparse.ArgumentParser()
@@ -110,6 +113,7 @@ def main():
     # fout = open(out_path, 'a')
 
     all_test_data = []
+    all_embeddings = {'input_id_x_processed': [], 'input_id_y_processed': [], 'input_id_x': [], 'input_id_y': []}
 
     idx = 0
 
@@ -145,6 +149,21 @@ def main():
         x_start = model.get_embeds(input_ids_x)
         input_ids_mask = cond.pop('input_mask')
         input_ids_mask_ori = input_ids_mask
+
+        if args.only_generate_embeddings:
+            # Get y embeddings if available
+            input_id_x_processed = cond.get('input_id_x_processed', None)
+            input_id_y_processed = cond.get('input_id_y_processed', None)
+            if input_id_x_processed is not None and input_id_y_processed is not None:
+                input_id_x_processed = input_id_x_processed.to(dist_util.dev())
+                input_id_y_processed = input_id_y_processed.to(dist_util.dev())
+                x_embeddings = model.get_embeds(input_id_x_processed)
+                y_embeddings = model.get_embeds(input_id_y_processed)
+                all_embeddings['input_id_x_processed'].append(x_embeddings.cpu().numpy())
+                all_embeddings['input_id_y_processed'].append(y_embeddings.cpu().numpy())
+                all_embeddings['input_id_x'].append(input_id_x_processed.cpu().numpy())
+                all_embeddings['input_id_y'].append(input_id_y_processed.cpu().numpy())
+            continue
 
         noise = th.randn_like(x_start)
         input_ids_mask = th.broadcast_to(input_ids_mask.unsqueeze(dim=-1), x_start.shape).to(dist_util.dev())
@@ -214,6 +233,37 @@ def main():
                     print(json.dumps({"recover": recov, "reference": ref, "source": src}), file=fout)
                 fout.close()
             dist.barrier()
+    
+    if args.only_generate_embeddings and rank == 0:
+        
+        # Create output directory if it doesn't exist
+        Path(args.out_dir).mkdir(parents=True, exist_ok=True)
+        
+        # Define output file path
+        model_base_name = os.path.basename(os.path.split(args.model_path)[0]) + f'.{os.path.split(args.model_path)[1]}'
+        out_dir = os.path.join(args.out_dir, f"{model_base_name.split('.ema')[0]}")
+        os.makedirs(out_dir, exist_ok=True)
+        
+        out_path = os.path.join(out_dir, f"embeddings_{args.split}_metadata.json")
+        
+        # Save embeddings to JSON
+        with open(out_path, 'w') as f:
+            json.dump({
+                'model_path': args.model_path,
+                'seed': args.seed2,
+                'split': args.split,
+                'timestamp': time.strftime('%Y-%m-%d %H:%M:%S')
+            }, f, indent=2)
+        
+        out_dir = os.path.join(out_dir, f"embeddings")
+        os.makedirs(out_dir, exist_ok=True)
+
+        for k, v in all_embeddings.items():
+            np.save(os.path.join(out_dir, f"{k}.npy"), np.concatenate(v, axis=0))
+        
+        
+        print(f"Saved {v.shape} embeddings to {out_path}")
+    
 
     print('### Total takes {:.2f}s .....'.format(time.time() - start_t))
     print(f'### Written the decoded output to {out_path}')

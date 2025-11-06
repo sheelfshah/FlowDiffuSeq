@@ -1,1 +1,5 @@
 python -m torch.distributed.launch --nproc_per_node=1 --master_port=12233 --use_env run_train.py --diff_steps 2000 --lr 0.0001 --learning_steps 30000 --save_interval 10000 --seed 102 --noise_schedule sqrt --hidden_dim 128 --bsz 128 --dataset qqp --data_dir datasets/QQP --vocab bert --seq_len 128 --schedule_sampler lossaware --notes qqp  --resume_checkpoint diffusion_models/diffuseq_qqp_h128_lr0.0001_t2000_sqrt_lossaware_seed102_qqp20251030-19\:19\:49/ema_0.9999_020000.pt 
+python eval_seq2seq.py  --folder ../generation_outputs/2000/diffuseq_qqp_h128_lr0.0001_t2000_sqrt_lossaware_seed102_test_ori20221113-20\:27\:29/ema_0.9999_050000.pt.samples/ 
+bash run_decode.sh
+
+python -m torch.distributed.launch --nproc_per_node=1 --master_port=12233 --use_env sample_seq2seq.py --model_path diffusion_models/diffuseq_qqp_h128_lr0.0001_t2000_sqrt_lossaware_seed102_qqp20251030-19\:19\:49/ema_0.9999_020000.pt --step 2000 --batch_size 64 --seed2 123 --split valid --out_dir generation_outputs/embeddings --top_p -1 --only_generate_embeddings True
