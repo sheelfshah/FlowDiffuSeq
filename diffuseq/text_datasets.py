@@ -9,6 +9,28 @@ import psutil
 import datasets
 from datasets import Dataset as Dataset2
 
+import sys
+
+"""
+load_data_text: 
+    get_corpus:
+        read data from jsonl file
+        helper_tokenize:
+            encode sentences to token ids
+            reduce length of the longer seq till len(x) + len(y) < seq_len 
+            create a mask vector for the input seq
+            pad to max length (input_ids = x + sep + y + pad, mask = 0000 (len(x) + 1) + 1111)
+            IMPORTANT TODO: this needs to change, the padding should be for individual x, y
+            RESOLVED: added input_id_x_processed and input_id_y_processed
+    convert to TextDataset:
+        gives dataset over fixed embeddings IMPORTANT TODO: make sure embeddings are learned
+    convert to data loader
+    return iterator for data loader
+
+
+
+"""
+
 def load_data_text(
     batch_size, 
     seq_len, 
@@ -103,11 +125,15 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
 
     def merge_and_mask(group_lst):
         lst = []
+        lst_x = []
+        lst_y = []
         mask = []
         for i in range(len(group_lst['input_id_x'])):
             end_token = group_lst['input_id_x'][i][-1]
             src = group_lst['input_id_x'][i][:-1]
             trg = group_lst['input_id_y'][i][:-1]
+            lst_x.append(src[:(seq_len//2 - 1)]+[end_token])
+            lst_y.append(trg[:(seq_len//2 - 1)]+[end_token])
             while len(src) + len(trg) > seq_len - 3:
                 if len(src)>len(trg):
                     src.pop()
@@ -123,6 +149,8 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
             mask.append([0]*(len(src)+1))
         group_lst['input_ids'] = lst
         group_lst['input_mask'] = mask
+        group_lst['input_id_x_processed'] = lst_x
+        group_lst['input_id_y_processed'] = lst_y
         return group_lst
     
     tokenized_datasets = tokenized_datasets.map(
@@ -136,6 +164,8 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
         max_length = seq_len
         group_lst['input_ids'] = _collate_batch_helper(group_lst['input_ids'], vocab_dict.pad_token_id, max_length)
         group_lst['input_mask'] = _collate_batch_helper(group_lst['input_mask'], 1, max_length)
+        group_lst['input_id_x_processed'] = _collate_batch_helper(group_lst['input_id_x_processed'], vocab_dict.pad_token_id, max_length//2)
+        group_lst['input_id_y_processed'] = _collate_batch_helper(group_lst['input_id_y_processed'], vocab_dict.pad_token_id, max_length//2)
         return group_lst
 
     print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
@@ -212,6 +242,8 @@ class TextDataset(Dataset):
             out_kwargs = {}
             out_kwargs['input_ids'] = np.array(self.text_datasets['train'][idx]['input_ids'])
             out_kwargs['input_mask'] = np.array(self.text_datasets['train'][idx]['input_mask'])
+            out_kwargs['input_id_x_processed'] = np.array(self.text_datasets['train'][idx]['input_id_x_processed'])
+            out_kwargs['input_id_y_processed'] = np.array(self.text_datasets['train'][idx]['input_id_y_processed'])
 
             return arr, out_kwargs
 

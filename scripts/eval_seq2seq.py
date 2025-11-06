@@ -71,6 +71,7 @@ if __name__ == '__main__':
     parser.add_argument('--eos', type=str, default='[SEP]', help='end token of the sentence')
     parser.add_argument('--sep', type=str, default='[SEP]', help='sep token of the sentence')
     parser.add_argument('--pad', type=str, default='[PAD]', help='pad token of the sentence')
+    parser.add_argument('--direct-input', type=bool, default=False, help='directly compare input and output')
 
     args = parser.parse_args()
 
@@ -108,6 +109,8 @@ if __name__ == '__main__':
                 source = json.loads(row)['source'].strip()
                 reference = json.loads(row)['reference'].strip()
                 recover = json.loads(row)['recover'].strip()
+                if args.direct_input:
+                    recover = source
                 source = source.replace(args.eos, '').replace(args.sos, '')
                 reference = reference.replace(args.eos, '').replace(args.sos, '').replace(args.sep, '')
                 recover = recover.replace(args.eos, '').replace(args.sos, '').replace(args.sep, '').replace(args.pad, '')
