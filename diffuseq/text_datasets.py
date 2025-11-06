@@ -24,6 +24,7 @@ load_data_text:
             RESOLVED: added input_id_x_processed and input_id_y_processed
     convert to TextDataset:
         gives dataset over fixed embeddings IMPORTANT TODO: make sure embeddings are learned
+        RESOLVED: embeddings are maintained independently by the model and they are indeed learned
     convert to data loader
     return iterator for data loader
 

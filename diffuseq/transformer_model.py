@@ -7,6 +7,7 @@ import numpy as np
 import torch as th
 import torch.nn as nn
 import torch.nn.functional as F
+import sys
 
 from .utils.nn import (
     SiLU,
@@ -116,17 +117,6 @@ class TransformerNetModel(nn.Module):
     def get_logits(self, hidden_repr):
         if self.logits_mode == 1:
             return self.lm_head(hidden_repr)
-        elif self.logits_mode == 2: # standard cosine similarity
-            text_emb = hidden_repr
-            emb_norm = (self.lm_head.weight ** 2).sum(-1).view(-1, 1)  # vocab
-            text_emb_t = th.transpose(text_emb.view(-1, text_emb.size(-1)), 0, 1)  # d, bsz*seqlen
-            arr_norm = (text_emb ** 2).sum(-1).view(-1, 1)  # bsz*seqlen, 1
-            dist = emb_norm + arr_norm.transpose(0, 1) - 2.0 * th.mm(self.lm_head.weight,
-                                                                     text_emb_t)  # (vocab, d) x (d, bsz*seqlen)
-            scores = th.sqrt(th.clamp(dist, 0.0, np.inf)).view(emb_norm.size(0), hidden_repr.size(0),
-                                                               hidden_repr.size(1)) # vocab, bsz*seqlen
-            scores = -scores.permute(1, 2, 0).contiguous()
-            return scores
         else:
             raise NotImplementedError
 
