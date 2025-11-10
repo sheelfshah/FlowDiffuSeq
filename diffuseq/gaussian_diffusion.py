@@ -966,4 +966,6 @@ class _WrappedModel:
         # print(temp.shape)
         # return temp
         # print(new_ts)
+        del kwargs['input_id_x_processed']
+        del kwargs['input_id_y_processed']
         return self.model(x, new_ts, **kwargs)
