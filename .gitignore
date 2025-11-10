@@ -9,5 +9,7 @@ datasets/
 datasets/*
 pretrained/
 pretrained/*
+embeddings/
+embeddings/*
 *.log
 *.pth
