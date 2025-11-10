@@ -15,6 +15,30 @@ from .utils.nn import (
     timestep_embedding,
 )
 
+class MLP(nn.Module):
+    def __init__(self, len_dim, input_dims, output_dims):
+        super().__init__()
+        self.len_dim = len_dim
+        self.input_dims = input_dims
+        self.output_dims = output_dims
+        self.in_dim = self.len_dim * self.input_dims
+        self.hidden_dim = self.in_dim * 1
+        self.out_dim = self.len_dim * self.output_dims
+        self.net = nn.Sequential(
+            nn.Linear(self.in_dim + 1, self.hidden_dim),
+            nn.SiLU(),
+            nn.Linear(self.hidden_dim, self.hidden_dim),
+            nn.SiLU(),
+            nn.Linear(self.hidden_dim, self.out_dim),
+        )
+    def forward(self, x, t):
+        t = t.unsqueeze(-1)
+        x = torch.flatten(x, start_dim=1)
+        x = torch.cat([x, t], dim=1)
+        out = self.net(x)
+        out = out.view(x.shape[0], self.len_dim, self.output_dims)
+        return out
+
 class TransformerNetModel(nn.Module):
     """
     The full Transformer model with attention and timestep embedding.
@@ -41,6 +65,7 @@ class TransformerNetModel(nn.Module):
         logits_mode=1,
         freeze_embeddings=False,
         freeze_rounding=False,
+        embedding_weight=None,
     ):
         super().__init__()
 
@@ -55,7 +80,10 @@ class TransformerNetModel(nn.Module):
         self.logits_mode = logits_mode
         self.hidden_size = config.hidden_size
 
-        self.word_embedding = nn.Embedding(vocab_size, self.input_dims)
+        if embedding_weight is not None:
+            embedding_weight = embedding_weight.clone().cpu()
+            
+        self.word_embedding = nn.Embedding(vocab_size, self.input_dims, _weight=embedding_weight)
         self.lm_head = nn.Linear(self.input_dims, vocab_size)
         with th.no_grad():
             self.lm_head.weight = self.word_embedding.weight
@@ -78,6 +106,8 @@ class TransformerNetModel(nn.Module):
         if init_pretrained == 'bert':
             print('initializing from pretrained bert...')
             print(config)
+            if embedding_weight is not None:
+                raise ValueError('embedding_weight should be None when init_pretrained is bert')
             temp_bert = BertModel.from_pretrained(config_name, config=config)
 
             self.word_embedding = temp_bert.embeddings.word_embeddings

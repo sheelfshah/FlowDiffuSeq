@@ -255,14 +255,14 @@ def main():
                 'timestamp': time.strftime('%Y-%m-%d %H:%M:%S')
             }, f, indent=2)
         
-        out_dir = os.path.join(out_dir, f"embeddings")
+        out_dir = os.path.join(out_dir, f"{args.split}_embeddings")
         os.makedirs(out_dir, exist_ok=True)
 
         for k, v in all_embeddings.items():
             np.save(os.path.join(out_dir, f"{k}.npy"), np.concatenate(v, axis=0))
         
         
-        print(f"Saved {v.shape} embeddings to {out_path}")
+            print(f"Saved {len(all_embeddings)} embeddings to {out_path}")
     
 
     print('### Total takes {:.2f}s .....'.format(time.time() - start_t))
