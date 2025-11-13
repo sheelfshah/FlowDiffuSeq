@@ -9,7 +9,8 @@ time_str = time.strftime("%Y%m%d_%H%M%S", time.localtime())
 
 import argparse
 import json
-
+import numpy as np
+import matplotlib.pyplot as plt
 
 def str2bool(v):
     """
@@ -48,8 +49,11 @@ class Config:
             "embedding_dimension": 128,
             "write_model": True,
             "train": False,
+            "checkpoint_dir": "",
+            "weighted_loss": False,
             "OVERFIT": False,
-            "PRINT_GRAD": False
+            "PRINT_GRAD": False,
+            "NO_REDIRECT": False
         }
         self.parser = argparse.ArgumentParser()
         add_dict_to_argparser(self.parser, default_config)
@@ -64,9 +68,20 @@ class Config:
             json.dump(self.args.__dict__, f, indent=4)
     
     def redirect_output(self):
-        sys.stdout = open(os.path.join(self.output_dir, "output.log"), "w")
-        sys.stderr = open(os.path.join(self.output_dir, "error.log"), "w")
+        if not self.args.NO_REDIRECT:
+            sys.stdout = open(os.path.join(self.output_dir, "output.log"), "w")
+            sys.stderr = open(os.path.join(self.output_dir, "error.log"), "w")
 
 
 def get_embedding_dir(split):
     return os.path.join(main_dir, f"embeddings/{split}_embeddings/")
+
+def plot_loss(output_dir):
+    ls = open(os.path.join(output_dir, "output.log")).readlines()
+    ls = ls[7:]
+    ls = [l.replace(",", "").split() for l in ls]
+    ls = [list(map(float, [l[1], l[3], l[6]])) for l in ls]
+    ls = np.array(ls)
+    plt.plot(ls[:, 1])
+    plt.plot(ls[:, 2])
+    plt.savefig(os.path.join(output_dir, "loss.png"))

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import jax.numpy as jnp
 from jax import random
+import numpy as np
 
 # JAX data loader (simple batching)
 def data_generator(x_emb, y_emb, x_enc, y_enc, batch_size, shuffle=False, key=None):
