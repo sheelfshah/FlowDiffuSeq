@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import numpy as np
 import jax.numpy as jnp
 import flax.linen as nn
 from jax import random
@@ -170,7 +171,7 @@ class DiTFlowModel(nn.Module):
 def get_model(args, key):
     if args.model == "MLP":
         model = MLP(
-            args.len_dim,
+            args.len_dim*(2 if args.joint_diffusion_model else 1),
             args.embedding_dimension,
             args.embedding_dimension
         )
@@ -178,19 +179,20 @@ def get_model(args, key):
         model = DiTFlowModel(
             input_dim=args.embedding_dimension,
             output_dim=args.embedding_dimension,
-            hidden_dim=args.embedding_dimension*2,
-            num_layers=2,
-            num_heads=4,
-            mlp_ratio=2,
-            dropout_rate=0.,
-            time_emb_dim=args.embedding_dimension*2
+            hidden_dim=args.model__hidden_dim,
+            num_layers=args.model__num_layers,
+            num_heads=args.model__num_heads,
+            mlp_ratio=args.model__mlp_ratio,
+            dropout_rate=args.model__dropout_rate,
+            time_emb_dim=args.model__time_emb_dim
         )
     else:
         raise ValueError("Invalid model type")
     key, init_key = random.split(key)
-    dummy_x = jnp.ones((1, args.len_dim, args.embedding_dimension))
+    dummy_x = jnp.ones((1, args.len_dim*(2 if args.joint_diffusion_model else 1), args.embedding_dimension))
     dummy_t = jnp.ones((1,))
     variables = model.init(init_key, dummy_x, dummy_t)
     return model, variables, key
 
-    
+def get_embedding_matrix():
+    return jnp.array(np.load("diffusion_models/embedding_matrix.npy"))
